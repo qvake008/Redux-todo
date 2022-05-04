@@ -4,24 +4,33 @@ import { Item } from './components/Item';
 import React from 'react';
 
 function App() {
-  const [state, dispatch] = React.useReducer(reducer, []);
+  const [state, dispatch] = React.useReducer(reducer, [
+    {
+      id: 1,
+      text: "Task 1" , 
+      completed : false
+    }
+  ]);
 
   function reducer (state, action) {
-    if (action.type === 'ADD_TASK') {
-      return [...state,
-        {
-          id: state.length ,
-          text: action.payload.text , 
-          completed : action.payload.completed
+    switch (action.type) {
+      case 'ADD_TASK':
+        return [...state,
+          {
+            id: state[state.length - 1].id + 1,
+            text: action.payload.text , 
+            completed : action.payload.completed
+          }
+        ];
+      case 'DELETE_TASK':
+        if (window.confirm('Вы точно хотите удалить это задание?')){
+          return state.filter(item => item.id !== action.payload.id && item.text !== action.payload.text)
+        }else {
+          return state
         }
-      ]
+      default:
+        return state
     }
-
-    if (action.type === 'DELETE_TASK' && window.confirm('Вы точно хотите удалить это задание?')) {
-      return state.filter(item => item.id !== action.payload)
-    }
-
-    return state
   }
 
   const addTask = ( input , checked ) => {
@@ -34,10 +43,13 @@ function App() {
     })
   }
 
-  const removeTask = ( id ) => {
+  const removeTask = ( id , text ) => {
     dispatch({
       type: "DELETE_TASK",
-      payload: id
+      payload: {
+        id,
+        text
+      }
     })
   }
 
@@ -57,7 +69,7 @@ function App() {
         <Divider />
         <List>
           {state.map(({ id , text , completed }) => (
-            <Item key = {id} id={id} text = {text} completed = {completed} oClickRemove={removeTask}/>
+            <Item key = {id + text} id={id} text = {text} completed = {completed} oClickRemove={removeTask}/>
           ))}
         </List>
         <Divider />
