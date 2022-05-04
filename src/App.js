@@ -10,11 +10,15 @@ function App() {
     if (action.type === 'ADD_TASK') {
       return [...state,
         {
-          id: state.length+1 , 
-          text: action.text , 
-          completed : action.completed
+          id: state.length ,
+          text: action.payload.text , 
+          completed : action.payload.completed
         }
       ]
+    }
+
+    if (action.type === 'DELETE_TASK' && window.confirm('Вы точно хотите удалить это задание?')) {
+      return state.filter(item => item.id !== action.payload)
     }
 
     return state
@@ -23,8 +27,17 @@ function App() {
   const addTask = ( input , checked ) => {
     dispatch({
       type: "ADD_TASK",
-      text: input,
-      completed : checked
+      payload: {
+        text : input,
+        completed: checked
+      }
+    })
+  }
+
+  const removeTask = ( id ) => {
+    dispatch({
+      type: "DELETE_TASK",
+      payload: id
     })
   }
 
@@ -44,7 +57,7 @@ function App() {
         <Divider />
         <List>
           {state.map(({ id , text , completed }) => (
-            <Item key = {id} text = {text} completed = {completed}/>
+            <Item key = {id} id={id} text = {text} completed = {completed} oClickRemove={removeTask}/>
           ))}
         </List>
         <Divider />
