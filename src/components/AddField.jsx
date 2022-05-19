@@ -18,7 +18,7 @@ export const AddField = ( {onClickAdd} ) => {
     <div className="field">
       <Checkbox
         checked={checked} 
-        onClick={(e) => { setCheked(!checked)}}
+        onClick={() => { setCheked(!checked)}}
         className="checkbox"
         icon={<RadioButtonUncheckedIcon />}
         checkedIcon={<CheckCircleIcon />}
